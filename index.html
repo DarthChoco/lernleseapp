@@ -113,89 +113,96 @@
     <div class="stats" id="statsInfo">0 Wörter verfügbar</div>
 
     <script>
-        let dictionary = [];
-        let learnedLetters = new Set();
-        let currentIndex = 0;
-        let filteredWords = [];
+    let dictionary = [];       // Alle Wörter aus der Datei
+    let learnedLetters = new Set(); // Die vom User gewählten Buchstaben (kleingeschrieben)
+    let filteredWords = [];    // Wörter, die nur bekannte Buchstaben enthalten
 
-        // 1. Wörter laden (von deutscheworte.txt)
-        async function initApp() {
-            try {
-                const response = await fetch('deutscheworte.txt');
-                if (!response.ok) throw new Error("deutscheworte nicht gefunden");
-                const text = await response.ok ? await response.text() : "";
-                dictionary = text.split('\n')
-                                 .map(w => w.trim())
-                                 .filter(w => w.length > 1);
-                console.log("Wörterbuch geladen:", dictionary.length);
-            } catch (err) {
-                console.warn("deutscheworte konnte nicht geladen werden. Nutze Beispielwörter.");
-                dictionary = ["Mama", "Papa", "Oma", "Opa", "Nase", "Lampe", "Sonne", "Auto", "Esel"];
-            }
-            createAlphabet();
+    // 1. Wörter aus der externen Datei laden
+    async function initApp() {
+        try {
+            const response = await fetch('wortliste.txt');
+            if (!response.ok) throw new Error();
+            const text = await response.text();
+            // Liste säubern: Zeilenumbrüche entfernen, leere Zeilen löschen
+            dictionary = text.split('\n')
+                             .map(w => w.trim())
+                             .filter(w => w.length > 1);
+        } catch (err) {
+            console.warn("Nutze Fallback-Liste...");
+            dictionary = ["Mama", "Papa", "Oma", "Opa", "Lama", "Nase", "Sofa", "Uhu", "Ameise"];
         }
+        createAlphabet();
+    }
 
-        // 2. Alphabet-Interface bauen
-        function createAlphabet() {
-            const container = document.getElementById('alphabet');
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ".split("");
-            
-            chars.forEach(char => {
-                const btn = document.createElement('button');
-                btn.className = 'letter-btn';
-                btn.innerText = char;
-                btn.onclick = () => {
-                    btn.classList.toggle('active');
-                    const lowerChar = char.toLowerCase();
-                    if(learnedLetters.has(lowerChar)) learnedLetters.delete(lowerChar);
-                    else learnedLetters.add(lowerChar);
-                    updateWordPool();
-                };
-                container.appendChild(btn);
-            });
-        }
+    // 2. Alphabet-Buttons erstellen
+    function createAlphabet() {
+        const container = document.getElementById('alphabet');
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ".split("");
+        
+        chars.forEach(char => {
+            const btn = document.createElement('button');
+            btn.className = 'letter-btn';
+            btn.innerText = char;
+            btn.onclick = () => {
+                btn.classList.toggle('active');
+                const lowerChar = char.toLowerCase();
+                
+                // Buchstabe hinzufügen oder entfernen
+                if(learnedLetters.has(lowerChar)) learnedLetters.delete(lowerChar);
+                else learnedLetters.add(lowerChar);
+                
+                // Nach jeder Änderung den Pool der erlaubten Wörter neu berechnen
+                updatePossibleWords();
+            };
+            container.appendChild(btn);
+        });
+    }
 
-        // 3. Pool der möglichen Wörter aktualisieren
-        function updateWordPool() {
+    // 3. Strikte Filter-Logik
+    function updatePossibleWords() {
+        if (learnedLetters.size === 0) {
+            filteredWords = [];
+        } else {
             filteredWords = dictionary.filter(word => {
-                const cleanWord = word.toLowerCase().replace(/[^a-zäöüß]/g, '');
-                return [...cleanWord].every(c => learnedLetters.has(c));
-            });
-
-            document.getElementById('statsInfo').innerText = `${filteredWords.length} Wörter gefunden`;
-            document.getElementById('nextBtn').disabled = filteredWords.length === 0;
-            
-            currentIndex = 0;
-            renderNextWord();
-        }
-
-        // 4. Silbentrennung & Anzeige
-        function renderNextWord() {
-            const container = document.getElementById('wordContainer');
-            if (filteredWords.length === 0) {
-                container.innerHTML = '<span style="color: #ccc; font-size: 1.5rem;">Wähle mehr Buchstaben!</span>';
-                return;
-            }
-
-            const word = filteredWords[currentIndex % filteredWords.length];
-            currentIndex++;
-
-            // Einfache deutsche Silbenlogik (Trennung nach Vokalen)
-            // Regex: Findet Gruppen von (Konsonanten + Vokale)
-            const syllableRegex = /[^aeiouäöü]*[aeiouäöü]+(?:[^aeiouäöü](?![aeiouäöü]))*/gi;
-            const syllables = word.match(syllableRegex) || [word];
-
-            container.innerHTML = "";
-            syllables.forEach((s, i) => {
-                const span = document.createElement('span');
-                span.innerText = s;
-                span.className = (i % 2 === 0) ? 's-red' : 's-blue';
-                container.appendChild(span);
+                // Wort in Buchstaben zerlegen und gegen bekannte Buchstaben prüfen
+                const wordChars = word.toLowerCase().split("");
+                // Wichtig: Nur Wörter zulassen, bei denen JEDER Buchstabe bekannt ist
+                return wordChars.every(c => learnedLetters.has(c));
             });
         }
 
-        // Start
-        initApp();
-    </script>
+        document.getElementById('statsInfo').innerText = `${filteredWords.length} Wörter gefunden`;
+        document.getElementById('nextBtn').disabled = filteredWords.length === 0;
+        
+        // Sofort ein neues Wort anzeigen, wenn welche gefunden wurden
+        if (filteredWords.length > 0) renderRandomWord();
+        else document.getElementById('wordContainer').innerHTML = "---";
+    }
+
+    // 4. Zufälliges Wort auswählen und Silben färben
+    function renderRandomWord() {
+        if (filteredWords.length === 0) return;
+
+        const container = document.getElementById('wordContainer');
+        // Zufalls-Index berechnen
+        const randomIndex = Math.floor(Math.random() * filteredWords.length);
+        const word = filteredWords[randomIndex];
+
+        // Silbentrennung nach Vokalgruppen (einfache deutsche Regel)
+        const syllableRegex = /[^aeiouäöü]*[aeiouäöü]+(?:[^aeiouäöü](?![aeiouäöü]))*/gi;
+        const syllables = word.match(syllableRegex) || [word];
+
+        container.innerHTML = "";
+        syllables.forEach((s, i) => {
+            const span = document.createElement('span');
+            span.innerText = s;
+            span.className = (i % 2 === 0) ? 's-red' : 's-blue';
+            container.appendChild(span);
+        });
+    }
+
+    // Start der App
+    initApp();
+</script>
 </body>
 </html>
