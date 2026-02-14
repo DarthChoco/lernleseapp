@@ -177,8 +177,8 @@
 
         function updateWordPool() {
             filteredWords = dictionary.filter(word => {
-                const cleanWord = word.toLowerCase();
-                return [...cleanWord].every(c => learnedLetters.has(c));
+                const searchWord = word.replace(/-/g, "").toLowerCase(); // Entfernt Bindestriche für den Check
+                return [...searchWord].every(c => learnedLetters.has(c));
             });
 
             document.getElementById('statsInfo').innerText = `${filteredWords.length} Wörter gefunden`;
@@ -207,7 +207,7 @@
             lastWord = pickedWord;
 
             const syllableRegex = /[^aeiouäöü]*[aeiouäöü]+(?:[^aeiouäöü](?![aeiouäöü]))*/gi;
-            const syllables = pickedWord.match(syllableRegex) || [pickedWord];
+            const syllables = pickedWord.split("-");
 
             container.innerHTML = "";
             syllables.forEach((s, i) => {
