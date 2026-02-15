@@ -1,7 +1,7 @@
 A-bend-es-sen
 a-ber
 A-mei-sen-bär
-Ab-end
+A-bend
 acht
 acht-zehn
 Af-fe
@@ -395,9 +395,9 @@ Obst
 of-fen
 oft
 oh-ne
-Oma
+O-ma
 On-kel
-Opa
+O-pa
 Ord-nung
 P-fau
 Pa-ket
