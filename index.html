@@ -3,222 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LernLese-App</title>
-    <style>
-        :root {
-            --primary-bg: #f8fbff;
-            --accent-color: #4caf50;
-            --syllable-1: #e53935; /* Rot */
-            --syllable-2: #1e88e5; /* Blau */
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--primary-bg);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 { color: #333; margin-bottom: 10px; }
-        p { color: #666; margin-bottom: 20px; }
-
-        /* Alphabet-Grid */
-        .letter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
-            gap: 8px;
-            width: 100%;
-            max-width: 600px;
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .letter-btn {
-            aspect-ratio: 1;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            background: #fff;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .letter-btn.active {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: #388e3c;
-            transform: translateY(-2px);
-        }
-
-        /* Wortanzeige */
-        .word-display {
-            font-size: clamp(3rem, 10vw, 5rem);
-            font-weight: 800;
-            margin: 50px 0;
-            min-height: 1.2em;
-            letter-spacing: 2px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .s-red { color: var(--syllable-1); }
-        .s-blue { color: var(--syllable-2); }
-
-        /* Navigation */
-        .controls {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .main-btn {
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            border-radius: 50px;
-            border: none;
-            background: #ff9800;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-            transition: transform 0.2s;
-        }
-
-        .main-btn:active { transform: scale(0.95); }
-        .main-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
-
-        .stats { font-size: 0.9rem; color: #888; margin-top: 10px; }
-    </style>
+    <title>SchlauFix - Rechnen & Lesen</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Lese-Profi</h1>
-    <p>Welche Buchstaben kannst du schon?</p>
-    
-    <div id="alphabet" class="letter-grid"></div>
+    <header>
+        <div class="logo">🦊 SchlauFix</div>
+        <nav class="game-nav">
+            <div class="nav-group">
+                <span>Deutsch</span>
+                <div class="nav-buttons">
+                    <button onclick="showGame('silben')" id="nav-silben" class="nav-btn active">Silben</button>
+                    <button onclick="showGame('anlaut')" id="nav-anlaut" class="nav-btn">Anlaute</button>
+                </div>
+            </div>
+            <div class="nav-group">
+                <span>Mathe</span>
+                <div class="nav-buttons">
+                    <button onclick="showMathGame('mengen')" id="nav-mengen" class="nav-btn math-btn">Mengen</button>
+                    <button onclick="showMathGame('vergleich')" id="nav-vergleich" class="nav-btn math-btn">Größer/Kleiner</button>
+                    <button onclick="showMathGame('rechnen')" id="nav-rechnen" class="nav-btn math-btn">Rechnen</button>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-    <div class="word-display" id="wordContainer">
-        <span style="color: #ccc; font-size: 1.5rem;">Wähle Buchstaben aus...</span>
-    </div>
+    <main>
+        <div id="game-silben" class="game-screen">
+            <div id="alphabet-container" class="alphabet"></div>
+            <hr>
+            <div class="word-display" id="wordContainer">Wähle Buchstaben!</div>
+            <div class="controls">
+                <button class="main-btn" onclick="renderRandomWord()">Weiter</button>
+                <button class="audio-btn" onclick="speakCurrentWord()">🔊</button>
+            </div>
+        </div>
 
-    <div class="controls">
-        <button id="nextBtn" class="main-btn" onclick="renderRandomWord()" disabled>Nächstes Wort</button>
-    </div>
+        <div id="game-anlaut" class="game-screen" style="display:none;">
+            <div id="anlautWord" class="word-display">? ? ?</div>
+            <div id="anlaut-keyboard" class="alphabet"></div>
+            <div id="anlautFeedback"></div>
+            <button class="main-btn" onclick="nextAnlautTask()">Anderes Wort</button>
+        </div>
 
-    <div class="stats" id="statsInfo">0 Wörter verfügbar</div>
+        <div id="game-rechnen" class="game-screen" style="display:none;">
+            <div class="math-controls-top">
+                <div class="nav-group">
+                    <span>Zahlenraum</span>
+                    <select id="math-range" onchange="generateMathTask()" class="nav-btn">
+                        <option value="10">bis 10</option>
+                        <option value="20" selected>bis 20</option>
+                        <option value="50">bis 50</option>
+                        <option value="100">bis 100</option>
+                    </select>
+                </div>
+            </div>
 
-        <script>
-        let dictionary = [];
-        let learnedLetters = new Set();
-        let filteredWords = [];
-        let lastWord = "";
+            <div id="math-task-area">
+                <div id="math-display" class="word-display"></div>
+                <div id="math-options" class="alphabet"></div>
+                <div id="math-feedback"></div>
+            </div>
+        </div>
+    </main>
 
-        async function initApp() {
-            // 1. Zuerst gespeicherte Buchstaben aus dem localStorage laden
-            const savedLetters = localStorage.getItem('meinLeseApp_fortschritt');
-            if (savedLetters) {
-                // Die gespeicherte Liste (String) wieder in ein Set umwandeln
-                learnedLetters = new Set(JSON.parse(savedLetters));
-            }
-
-            try {
-                const response = await fetch('wortliste.txt');
-                const text = await response.text();
-                dictionary = text.split('\n').map(w => w.trim()).filter(w => w.length > 0);
-            } catch (err) {
-                dictionary = ["Mama", "Papa", "Oma", "Opa", "Lama", "Nase", "Sofa", "Uhu"];
-            }
-            
-            createAlphabet();
-            updateWordPool(); // Initialen Pool basierend auf geladenen Buchstaben erstellen
-        }
-
-        function createAlphabet() {
-            const container = document.getElementById('alphabet');
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ".split("");
-            chars.forEach(char => {
-                const btn = document.createElement('button');
-                btn.className = 'letter-btn';
-                
-                // Falls der Buchstabe geladen wurde, Button direkt als aktiv markieren
-                if (learnedLetters.has(char.toLowerCase())) {
-                    btn.classList.add('active');
-                }
-                
-                btn.innerText = char;
-                btn.onclick = () => {
-                    btn.classList.toggle('active');
-                    const lowerChar = char.toLowerCase();
-                    
-                    if(learnedLetters.has(lowerChar)) {
-                        learnedLetters.delete(lowerChar);
-                    } else {
-                        learnedLetters.add(lowerChar);
-                    }
-                    
-                    // Fortschritt im localStorage speichern
-                    saveProgress();
-                    updateWordPool();
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function saveProgress() {
-            // Das Set in ein Array umwandeln und als Text speichern
-            const data = JSON.stringify(Array.from(learnedLetters));
-            localStorage.setItem('meinLeseApp_fortschritt', data);
-        }
-
-        function updateWordPool() {
-            filteredWords = dictionary.filter(word => {
-                const searchWord = word.replace(/-/g, "").toLowerCase(); // Entfernt Bindestriche für den Check
-                return [...searchWord].every(c => learnedLetters.has(c));
-            });
-
-            document.getElementById('statsInfo').innerText = `${filteredWords.length} Wörter gefunden`;
-            document.getElementById('nextBtn').disabled = filteredWords.length === 0;
-
-            if (filteredWords.length > 0) {
-                renderRandomWord();
-            } else {
-                document.getElementById('wordContainer').innerHTML = "---";
-            }
-        }
-
-        function renderRandomWord() {
-            if (filteredWords.length === 0) return;
-            const container = document.getElementById('wordContainer');
-            let pickedWord;
-
-            if (filteredWords.length > 1) {
-                do {
-                    pickedWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
-                } while (pickedWord === lastWord);
-            } else {
-                pickedWord = filteredWords[0];
-            }
-            
-            lastWord = pickedWord;
-
-            const syllableRegex = /[^aeiouäöü]*[aeiouäöü]+(?:[^aeiouäöü](?![aeiouäöü]))*/gi;
-            const syllables = pickedWord.split("-");
-
-            container.innerHTML = "";
-            syllables.forEach((s, i) => {
-                const span = document.createElement('span');
-                span.innerText = s;
-                span.className = (i % 2 === 0) ? 's-red' : 's-blue';
-                container.appendChild(span);
-            });
-        }
-
-        initApp();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
