@@ -58,22 +58,20 @@ body {
     border-color: #E64A19;
 }
 
-/* Spezielle Farbe für Mathe-Nav */
 .math-btn.active {
-    background: #2196F3;
-    border-color: #1976D2;
+    background: #2196F3 !important;
+    border-color: #1976D2 !important;
+    color: white !important;
 }
 
-/* --- Mathe-Steuerung (Im oberen Rahmen des Spiels) --- */
+/* --- Mathe-Steuerung (Zahlenraum) --- */
 .math-controls-top {
     display: flex;
     justify-content: center;
     gap: 15px;
     margin-bottom: 25px;
-    flex-wrap: wrap;
 }
 
-/* Styling für das Zahlenraum-Dropdown */
 select.nav-btn {
     appearance: none;
     padding-right: 35px;
@@ -81,7 +79,6 @@ select.nav-btn {
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 14px;
-    cursor: pointer;
 }
 
 /* --- Haupt-Screens --- */
@@ -97,18 +94,17 @@ select.nav-btn {
 
 /* --- Wort- & Aufgaben-Anzeige (Fixiert auf 4.5rem) --- */
 .word-display {
-    font-size: 4.5rem; 
+    font-size: 3.15rem;
     font-weight: 900;
     margin: 20px 0;
-    min-height: 120px;
+    min-height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     line-height: 1.2;
 }
 
-/* Animation für das Erscheinen der Lösung */
 .answer-highlight {
     color: #4CAF50;
     display: inline-block;
@@ -121,7 +117,7 @@ select.nav-btn {
     100% { transform: scale(1); }
 }
 
-/* --- Tastaturen (Alphabet & Zahlen) --- */
+/* --- Tastaturen (EINHEITLICH: 48px) --- */
 .alphabet {
     display: flex;
     flex-wrap: wrap;
@@ -130,7 +126,8 @@ select.nav-btn {
     margin: 15px 0;
 }
 
-.letter-btn {
+/* Auswahl-Buttons & Spiel-Buttons sind jetzt identisch */
+.letter-btn, .key-btn {
     width: 48px;
     height: 48px;
     font-size: 1.4rem;
@@ -139,6 +136,7 @@ select.nav-btn {
     background: white;
     border-radius: 10px;
     cursor: pointer;
+    transition: all 0.1s;
 }
 
 .letter-btn.active {
@@ -148,15 +146,8 @@ select.nav-btn {
 }
 
 .key-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.8rem;
-    font-weight: bold;
     border: 3px solid #ddd;
-    background: #fff;
-    border-radius: 12px;
     box-shadow: 0 4px 0 #ccc;
-    cursor: pointer;
 }
 
 .key-btn:active {
@@ -164,40 +155,40 @@ select.nav-btn {
     box-shadow: 0 1px 0 #ccc;
 }
 
-/* --- Haupt-Interaktions-Buttons (Fixiert auf Große Darstellung) --- */
+/* --- Haupt-Interaktions-Buttons (30% kleiner) --- */
 .controls {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
-    margin-top: 40px;
+    gap: 25px;
+    margin-top: 30px;
 }
 
 .main-btn {
-    padding: 25px 60px; 
-    font-size: 2rem;    
+    padding: 18px 45px; 
+    font-size: 1.6rem;    
     background: linear-gradient(135deg, #FF5722, #FF8A65);
     color: white;
     border: none;
-    border-radius: 60px;
+    border-radius: 45px;
     cursor: pointer;
     font-weight: 900;
-    box-shadow: 0 6px 15px rgba(255, 87, 34, 0.3);
+    box-shadow: 0 5px 12px rgba(255, 87, 34, 0.3);
 }
 
 .audio-btn {
-    width: 90px;  /* Wie gewünscht 90px */
-    height: 90px; /* Wie gewünscht 90px */
-    font-size: 3rem; 
+    width: 65px;  
+    height: 65px; 
+    font-size: 2.2rem; 
     background: white;
-    border: 4px solid #FF5722;
+    border: 3px solid #FF5722;
     color: #FF5722;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 /* --- Mathe-Elemente --- */
@@ -218,7 +209,7 @@ select.nav-btn {
 }
 
 .math-big-num {
-    font-size: 4.5rem;
+    font-size: 3.15rem; 
     font-weight: 900;
     color: #2196F3;
     margin: 0 15px;
@@ -226,15 +217,10 @@ select.nav-btn {
 
 /* --- Feedback & Texte --- */
 #anlautFeedback, #math-feedback {
-    font-size: 2rem;
-    height: 50px;
+    font-size: 1.8rem;
+    height: 45px;
     margin: 15px 0;
     font-weight: bold;
-}
-
-.instruction { 
-    font-size: 1.2rem; 
-    color: #666; 
 }
 
 hr {
@@ -244,8 +230,20 @@ hr {
     margin: 20px 0;
 }
 
-h3 {
-    font-size: 1rem;
-    color: #999;
-    margin-bottom: 10px;
+#math-options {
+    display: grid;
+    /* Erzeugt Spalten, die mindestens 50px breit sind, maximal 10 pro Reihe */
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 10px;
+    justify-content: center;
+    max-width: 600px; /* Begrenzt die Breite, damit nicht mehr als 10 passen */
+    margin: 20px auto;
+}
+
+/* Anpassung der Button-Größe innerhalb des Grids */
+#math-options .key-btn {
+    width: 50px;  /* Leicht reduziert, damit 10 nebeneinander passen */
+    height: 50px;
+    font-size: 1.4rem;
+    margin: 0 auto; /* Zentriert die Buttons in ihrer Grid-Zelle */
 }

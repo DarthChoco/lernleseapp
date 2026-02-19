@@ -114,7 +114,7 @@ function renderRandomWord() {
     word.split("-").forEach((syllable, index) => {
         const span = document.createElement('span');
         span.innerText = syllable;
-        span.style.color = (index % 2 === 0) ? "red" : "blue";
+        span.style.color = (index % 2 === 0) ? "blue" : "red";
         container.appendChild(span);
     });
 }
@@ -157,7 +157,6 @@ function generateMathTask() {
     document.getElementById('math-feedback').innerText = "";
 
     if (mathMode === 'mengen') {
-        // Menge 1 bis max 20
         currentMathAnswer = Math.floor(Math.random() * Math.min(range, 20)) + 1;
         const grid = document.createElement('div');
         grid.className = 'dot-container';
@@ -206,16 +205,20 @@ function generateMathTask() {
 
 function createMathNumbers(min, max) {
     const container = document.getElementById('math-options');
+    container.innerHTML = ""; // Container leeren
+    
+    // Berechne die Anzahl der Spalten (min 5, max 10)
+    const count = (max - min) + 1;
+    const columns = Math.min(10, Math.max(5, Math.ceil(count / Math.ceil(count / 10))));
+    
+    // Dynamische Breite setzen, um die 10er-Regel zu erzwingen
+    // 50px pro Button + 10px Gap
+    container.style.maxWidth = (columns * 60) + "px";
+
     for (let i = min; i <= max; i++) {
         const b = document.createElement('button');
         b.innerText = i;
         b.className = 'key-btn';
-        // Automatische Verkleinerung der Buttons bei großem Zahlenraum
-        if (max > 20) {
-            b.style.width = "45px";
-            b.style.height = "45px";
-            b.style.fontSize = "1.1rem";
-        }
         b.onclick = () => checkMathAnswer(i);
         container.appendChild(b);
     }
