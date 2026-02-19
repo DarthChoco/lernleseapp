@@ -16,7 +16,7 @@ body {
     margin-bottom: 15px;
 }
 
-/* --- Navigation (Obere Leiste) --- */
+/* --- Navigation (Obere Haupt-Leiste) --- */
 .game-nav {
     display: flex;
     justify-content: center;
@@ -58,13 +58,14 @@ body {
     border-color: #E64A19;
 }
 
+/* Aktiver Button im Mathe-Bereich (Blau) */
 .math-btn.active {
     background: #2196F3 !important;
     border-color: #1976D2 !important;
     color: white !important;
 }
 
-/* --- Mathe-Steuerung (Zahlenraum) --- */
+/* --- Mathe-Steuerung (Zahlenraum innerhalb des Screens) --- */
 .math-controls-top {
     display: flex;
     justify-content: center;
@@ -92,9 +93,9 @@ select.nav-btn {
     min-height: 450px;
 }
 
-/* --- Wort- & Aufgaben-Anzeige (Fixiert auf 4.5rem) --- */
+/* --- Wort- & Aufgaben-Anzeige (30% verkleinert) --- */
 .word-display {
-    font-size: 3.15rem;
+    font-size: 3.15rem; 
     font-weight: 900;
     margin: 20px 0;
     min-height: 100px;
@@ -105,6 +106,14 @@ select.nav-btn {
     line-height: 1.2;
 }
 
+.math-big-num {
+    font-size: 3.15rem; 
+    font-weight: 900;
+    color: #2196F3;
+    margin: 0 15px;
+}
+
+/* Animation bei richtiger Lösung */
 .answer-highlight {
     color: #4CAF50;
     display: inline-block;
@@ -117,7 +126,7 @@ select.nav-btn {
     100% { transform: scale(1); }
 }
 
-/* --- Tastaturen (EINHEITLICH: 48px) --- */
+/* --- Tastaturen (Einheitlich 48px) --- */
 .alphabet {
     display: flex;
     flex-wrap: wrap;
@@ -126,7 +135,15 @@ select.nav-btn {
     margin: 15px 0;
 }
 
-/* Auswahl-Buttons & Spiel-Buttons sind jetzt identisch */
+/* Spezielles Raster für Mathe-Zahlen (Max 10 pro Zeile) */
+#math-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+    gap: 10px;
+    justify-content: center;
+    margin: 20px auto;
+}
+
 .letter-btn, .key-btn {
     width: 48px;
     height: 48px;
@@ -137,6 +154,9 @@ select.nav-btn {
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .letter-btn.active {
@@ -155,43 +175,43 @@ select.nav-btn {
     box-shadow: 0 1px 0 #ccc;
 }
 
-/* --- Haupt-Interaktions-Buttons (30% kleiner) --- */
+/* --- Haupt-Aktions-Buttons (40% verkleinert) --- */
 .controls {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 25px;
-    margin-top: 30px;
+    gap: 20px;
+    margin-top: 25px;
 }
 
 .main-btn {
-    padding: 18px 45px; 
-    font-size: 1.6rem;    
+    padding: 12px 30px; 
+    font-size: 1.1rem;    
     background: linear-gradient(135deg, #FF5722, #FF8A65);
     color: white;
     border: none;
-    border-radius: 45px;
+    border-radius: 30px;
     cursor: pointer;
     font-weight: 900;
-    box-shadow: 0 5px 12px rgba(255, 87, 34, 0.3);
+    box-shadow: 0 3px 8px rgba(255, 87, 34, 0.3);
 }
 
 .audio-btn {
-    width: 65px;  
-    height: 65px; 
-    font-size: 2.2rem; 
+    width: 45px;  
+    height: 45px; 
+    font-size: 1.5rem; 
     background: white;
-    border: 3px solid #FF5722;
+    border: 2px solid #FF5722;
     color: #FF5722;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* --- Mathe-Elemente --- */
+/* --- Mathe-Elemente (Mengen) --- */
 .dot-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -199,6 +219,8 @@ select.nav-btn {
     padding: 15px;
     background: #f9f9f9;
     border-radius: 15px;
+    max-width: fit-content;
+    margin: 0 auto;
 }
 
 .dot {
@@ -208,14 +230,7 @@ select.nav-btn {
     border-radius: 50%;
 }
 
-.math-big-num {
-    font-size: 3.15rem; 
-    font-weight: 900;
-    color: #2196F3;
-    margin: 0 15px;
-}
-
-/* --- Feedback & Texte --- */
+/* --- Feedback & Trenner --- */
 #anlautFeedback, #math-feedback {
     font-size: 1.8rem;
     height: 45px;
@@ -230,20 +245,8 @@ hr {
     margin: 20px 0;
 }
 
-#math-options {
-    display: grid;
-    /* Erzeugt Spalten, die mindestens 50px breit sind, maximal 10 pro Reihe */
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: 10px;
-    justify-content: center;
-    max-width: 600px; /* Begrenzt die Breite, damit nicht mehr als 10 passen */
-    margin: 20px auto;
-}
-
-/* Anpassung der Button-Größe innerhalb des Grids */
-#math-options .key-btn {
-    width: 50px;  /* Leicht reduziert, damit 10 nebeneinander passen */
-    height: 50px;
-    font-size: 1.4rem;
-    margin: 0 auto; /* Zentriert die Buttons in ihrer Grid-Zelle */
+h3 {
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 10px;
 }
