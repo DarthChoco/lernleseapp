@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>SchlauFix Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body>
     <div class="app-container">
@@ -15,15 +16,15 @@
                 <div id="current-score">0</div>
             </div>
 
-            <nav class="side-nav">
-                <div class="nav-section">
-                    <h4>Klasse</h4>
-                    <select id="grade-level" class="grade-select" onchange="updateGradeLevel()">
-                        <option value="1">1. Klasse</option>
-                        <option value="2">2. Klasse</option>
-                    </select>
-                </div>
+            <div class="nav-section">
+                <h4>Klasse</h4>
+                <select id="grade-level" class="grade-select" onchange="updateGradeLevel()">
+                    <option value="1">1. Klasse</option>
+                    <option value="2">2. Klasse</option>
+                </select>
+            </div>
 
+            <nav class="side-nav">
                 <div class="nav-section">
                     <h4>Deutsch</h4>
                     <button class="side-btn grade-1-only" onclick="showGame('silben')">📖 Silben</button>

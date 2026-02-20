@@ -185,16 +185,23 @@ function checkAnlaut(char) {
     const display = document.getElementById('anlautWord');
 
     if (char === correctChar) {
+        // RICHTIG
         score++;
         display.innerText = lastWord.replace(/-/g, "");
-        display.style.color = "#4CAF50"; // Grün
+        display.classList.add('correct-animation');
         updateScoreDisplay();
-        setTimeout(nextAnlautTask, 1500);
+        setTimeout(() => {
+            display.classList.remove('correct-animation');
+            nextAnlautTask();
+        }, 1200);
     } else {
+        // FALSCH
         score = Math.max(0, score - 1);
-        display.style.color = "#F44336"; // Rot
+        display.classList.add('wrong-animation');
         updateScoreDisplay();
-        setTimeout(() => { display.style.color = ""; }, 500);
+        setTimeout(() => {
+            display.classList.remove('wrong-animation');
+        }, 400);
     }
 }
 
@@ -202,41 +209,67 @@ function checkAnlaut(char) {
 function generateMathTask() {
     const display = document.getElementById('math-display');
     const options = document.getElementById('math-options');
-    display.innerHTML = ""; options.innerHTML = "";
+    display.innerHTML = ""; 
+    options.innerHTML = "";
 
     if (mathMode === 'mengen') {
+        // Zufallszahl zwischen 1 und 10 (oder mathRange, falls gewünscht)
         currentMathAnswer = Math.floor(Math.random() * 10) + 1;
+        
         let grid = document.createElement('div');
         grid.className = 'dot-container';
-        for(let i=0; i<currentMathAnswer; i++) grid.innerHTML += '<div class="dot"></div>';
+        grid.id = 'math-quest';
+        
+        for(let i = 0; i < currentMathAnswer; i++) {
+            let d = document.createElement('div');
+            d.className = 'dot';
+            grid.appendChild(d);
+        }
         display.appendChild(grid);
-        for(let i=1; i<=10; i++) addMathOption(i);
+        
+        // Immer Zahlen 1-10 als Auswahl bei Mengen
+        for(let i = 1; i <= 10; i++) addMathOption(i);
     } 
     else if (mathMode === 'vergleich') {
         let n1 = Math.floor(Math.random() * mathRange);
         let n2 = Math.floor(Math.random() * mathRange);
-        display.innerHTML = `<div class="math-big-num">${n1}</div><div id="math-quest">?</div><div class="math-big-num">${n2}</div>`;
+        
+        display.innerHTML = `
+            <div class="math-row">
+                <span>${n1}</span>
+                <span id="math-quest">?</span>
+                <span>${n2}</span>
+            </div>`;
+            
         currentMathAnswer = n1 > n2 ? ">" : (n1 < n2 ? "<" : "=");
         [">", "<", "="].forEach(op => addMathOption(op));
     } 
-    else { // Standard: Rechnen
+    else { // Rechnen
         let a = Math.floor(Math.random() * (mathRange + 1));
         let b = Math.floor(Math.random() * (mathRange + 1));
         let isMinus = Math.random() > 0.5 && a >= b;
         
+        let op = "+";
         if (isMinus) {
             currentMathAnswer = a - b;
-            display.innerHTML = `<div class="math-big-num">${a} - ${b} = </div><div id="math-quest">?</div>`;
+            op = "-";
         } else {
-            // Sicherstellen, dass Summe im Zahlenraum bleibt
+            // Begrenzung damit Summe nicht über mathRange geht
             a = Math.floor(Math.random() * (mathRange / 2));
             b = Math.floor(Math.random() * (mathRange / 2));
             currentMathAnswer = a + b;
-            display.innerHTML = `<div class="math-big-num">${a} + ${b} = </div><div id="math-quest">?</div>`;
         }
         
-        // Optionen generieren (0 bis mathRange)
-        for(let i=0; i<=mathRange; i++) addMathOption(i);
+        display.innerHTML = `
+            <div class="math-row">
+                <span>${a} ${op} ${b} = </span>
+                <span id="math-quest">?</span>
+            </div>`;
+        
+        // Dynamische Optionen
+        let start = Math.max(0, currentMathAnswer - 2);
+        let end = Math.min(mathRange, currentMathAnswer + 7);
+        for(let i = 0; i <= mathRange; i++) addMathOption(i);
     }
 }
 
@@ -246,17 +279,22 @@ function addMathOption(val) {
     b.className = "letter-btn";
     b.onclick = () => {
         const questEl = document.getElementById('math-quest');
-        if (val == currentMathAnswer) { 
+        if (val == currentMathAnswer) {
             score++;
             questEl.innerText = val;
-            questEl.classList.add('correct');
+            questEl.classList.add('correct-animation');
             updateScoreDisplay();
-            setTimeout(generateMathTask, 1000);
+            setTimeout(() => {
+                questEl.classList.remove('correct-animation');
+                generateMathTask();
+            }, 1000);
         } else {
             score = Math.max(0, score - 1);
-            questEl.classList.add('wrong');
+            questEl.classList.add('wrong-animation');
             updateScoreDisplay();
-            setTimeout(() => { questEl.classList.remove('wrong'); }, 500);
+            setTimeout(() => {
+                questEl.classList.remove('wrong-animation');
+            }, 400);
         }
     };
     document.getElementById('math-options').appendChild(b);

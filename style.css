@@ -1,73 +1,94 @@
 /* --- BASIS-SETUP & VARIABLEN --- */
 :root {
-    --primary: #FF5722;      /* Orange: Deutsch & Hauptaktionen */
-    --secondary: #2196F3;    /* Blau: Mathe */
-    --success: #4CAF50;      /* Grün: Richtig / Aktiv */
-    --danger: #F44336;       /* Rot: Fehler */
+    --primary: #FF5722;
+    --secondary: #2196F3;
+    --success: #4CAF50;
+    --danger: #F44336;
     --bg: #f0f7ff;
-    --sidebar-width: 250px;
+    --sidebar-width: 240px;
+    --bottom-nav-height: 70px;
+
+    /* Dynamische Skalierung je nach Viewport */
+    --btn-size: clamp(60px, 12vw, 85px);
+    --btn-font: clamp(1.4rem, 4vw, 2.2rem);
+    --word-font: clamp(1.8rem, 7vw, 3.5rem);
 }
 
-body {
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
     margin: 0;
-    background-color: var(--bg);
-    height: 100vh;
-    display: flex;
+    padding: 0;
+    height: 100dvh;
     overflow: hidden;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background-color: var(--bg);
 }
 
+/* =============================================
+   LAYOUT: Desktop & Tablet (ab 769px)
+   ============================================= */
 .app-container {
     display: flex;
+    flex-direction: row;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
 }
 
 /* --- SIDEBAR --- */
 .sidebar {
     width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
     background: white;
     box-shadow: 2px 0 15px rgba(0,0,0,0.05);
-    display: flex; flex-direction: column;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
     z-index: 10;
+    overflow-y: auto;
 }
 
 .logo {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 900;
     color: var(--primary);
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+    flex-shrink: 0;
 }
 
 #score-display {
     background: #e8f5e9;
-    padding: 15px;
+    padding: 12px;
     border-radius: 15px;
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+    border: 2px solid #c8e6c9;
+    flex-shrink: 0;
 }
 
-.score-label { 
-    display: block; 
-    font-size: 0.8rem; 
-    color: var(--success); 
-    text-transform: uppercase; 
-    font-weight: bold; 
+.score-label {
+    font-size: 0.8rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-#current-score { 
-    font-size: 2.2rem; 
-    font-weight: bold; 
-    color: #2e7d32; 
+#current-score {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #2e7d32;
+    line-height: 1.1;
 }
 
 .nav-section h4 {
-    font-size: 0.75rem;
-    color: #999;
+    font-size: 0.7rem;
+    color: #bbb;
     text-transform: uppercase;
-    margin: 20px 0 10px 10px;
+    margin: 15px 0 5px 5px;
 }
 
 .side-btn, .grade-select {
@@ -81,21 +102,27 @@ body {
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer;
-    transition: 0.2s;
+    transition: background 0.2s;
 }
 
 .grade-select {
     border: 2px solid #eee;
-    background: white;
+    background: #fafafa;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .side-btn:hover { background: #fff3e0; }
-.side-btn.active { background: var(--primary); color: white; }
+.side-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 0 #d84315;
+}
 
-/* --- HAUPTBEREICH & SPIELFELD --- */
+/* --- HAUPTBEREICH --- */
 .main-content {
-    flex-grow: 1;
-    padding: 40px;
+    flex: 1;
+    padding: 20px;
     display: flex;
     justify-content: center;
     overflow-y: auto;
@@ -104,131 +131,360 @@ body {
 .game-screen {
     background: white;
     width: 100%;
-    max-width: 850px;
-    padding: 40px;
+    max-width: 900px;
+    padding: 25px;
     border-radius: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
     align-self: flex-start;
 }
 
-/* --- ANZEIGEN (WORTE & MATHE) --- */
-.word-display {
-    font-size: 4rem;
+/* =============================================
+   ANZEIGEN
+   ============================================= */
+.word-display, #math-display {
+    font-size: var(--word-font);
     font-weight: 800;
-    min-height: 160px;
+    min-height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 0;
-    transition: color 0.3s;
+    margin-bottom: 20px;
+    text-align: center;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
-#wordContainer { gap: 0 !important; }
-
-/* Mathe Spezial-Anzeige */
-.math-big-num { color: var(--secondary); font-size: 4rem; font-weight: 800; }
-#math-quest { 
-    color: var(--primary); 
-    min-width: 70px; 
-    text-align: center; 
-    border-bottom: 5px solid #eee; 
-    margin-left: 15px;
-    transition: all 0.2s;
-}
-
-/* --- FEEDBACK KLASSEN --- */
-#math-quest.correct { color: var(--success); border-bottom-color: var(--success); transform: scale(1.1); }
-#math-quest.wrong { color: var(--danger); border-bottom-color: var(--danger); transform: shake 0.2s; }
-
-/* --- BUTTONS & GRIDS --- */
-.alphabet, .alphabet-grid, .range-selection {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.letter-btn, .range-btn, .audio-btn, .main-btn {
-    height: 60px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border: 2px solid #ddd;
-    border-radius: 15px;
-    background: white;
-    cursor: pointer;
+.math-row {
     display: flex;
-    justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 0 #ddd;
-    transition: 0.1s;
-    user-select: none;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-/* Aktive Zustände (z.B. gewählte Buchstaben oder Zahlenraum) */
-.letter-btn.active, .range-btn.active { 
-    background: var(--success) !important; 
-    color: white !important; 
-    border-color: #388E3C !important; 
-    box-shadow: 0 4px 0 #2e7d32; 
+#math-quest {
+    min-width: 60px;
+    border-bottom: 6px solid #eee;
+    color: var(--primary);
+    text-align: center;
 }
 
-.range-btn.active { 
-    background: var(--secondary) !important; 
-    box-shadow: 0 4px 0 #1565C0; 
-}
-
-/* Klick-Effekt */
-.letter-btn:active, .main-btn:active, .range-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #ccc;
-}
-
-/* Steuerungselemente unten */
+/* =============================================
+   CONTROLS (Weiter / Audio)
+   ============================================= */
 .controls {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.audio-btn, .main-btn {
+    padding: 12px 28px;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-weight: bold;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.audio-btn {
+    background: #e3f2fd;
+    color: var(--secondary);
+    font-size: 1.8rem;
+    padding: 10px 20px;
 }
 
 .main-btn {
     background: var(--primary);
     color: white;
-    border: none;
-    padding: 0 40px;
-    box-shadow: 0 4px 0 #d84315;
+    box-shadow: 0 5px 0 #d84315;
+    flex-grow: 1;
+    max-width: 200px;
 }
 
-.audio-btn {
-    width: 60px;
-    border-color: var(--primary);
-    color: var(--primary);
+.main-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #d84315;
 }
 
-/* --- MATHE MENGEN (PUNKTE) --- */
+/* =============================================
+   MENGENBILDER
+   ============================================= */
 .dot-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 15px;
-    justify-items: center;
+    gap: clamp(6px, 2vw, 12px);
+    padding: clamp(10px, 3vw, 15px);
+    background: #fdfdfd;
+    border: 2px dashed #eee;
+    border-radius: 20px;
+    max-width: min(350px, 90%);
+    margin: 0 auto;
 }
 
 .dot {
-    width: 35px;
-    height: 35px;
+    width: clamp(22px, 6vw, 35px);
+    height: clamp(22px, 6vw, 35px);
     background: var(--secondary);
     border-radius: 50%;
-    box-shadow: inset -3px -3px 5px rgba(0,0,0,0.2);
+    box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2);
+    aspect-ratio: 1;
 }
 
-/* --- HILFSKLASSEN --- */
-.hidden { display: none !important; }
-.grade-1-only { /* Wird per JS gesteuert */ }
+/* =============================================
+   BUTTONS: Alphabet, Mathe-Optionen, Einstellungen
+   ============================================= */
+.alphabet, .alphabet-grid, .range-selection, #math-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--btn-size), 1fr));
+    gap: clamp(8px, 2vw, 15px);
+    margin-top: 10px;
+}
 
-/* Schüttel-Animation für Fehler */
+.letter-btn, .range-btn {
+    height: var(--btn-size);
+    font-size: var(--btn-font);
+    font-weight: bold;
+    border: 3px solid #eee;
+    border-radius: 18px;
+    background: white;
+    box-shadow: 0 5px 0 #eee;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s, box-shadow 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.letter-btn:active, .range-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #ddd;
+}
+
+.letter-btn.active {
+    background: var(--success) !important;
+    color: white !important;
+    border-color: #388E3C !important;
+    box-shadow: 0 5px 0 #2e7d32;
+}
+
+.range-btn.active {
+    background: var(--secondary) !important;
+    color: white !important;
+    border-color: #1976D2 !important;
+    box-shadow: 0 5px 0 #1565C0;
+}
+
+/* =============================================
+   EINSTELLUNGEN
+   ============================================= */
+.game-screen h3 {
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    color: #444;
+    margin: 20px 0 10px;
+}
+
+.game-screen h3:first-child { margin-top: 0; }
+
+/* =============================================
+   FEEDBACK ANIMATIONEN
+   ============================================= */
 @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    100% { transform: translateX(0); }
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-10px); }
+    40%       { transform: translateX(10px); }
+    60%       { transform: translateX(-6px); }
+    80%       { transform: translateX(6px); }
+}
+
+.wrong-animation {
+    animation: shake 0.35s ease-in-out;
+    color: var(--danger) !important;
+}
+
+.correct-animation {
+    transform: scale(1.15);
+    color: var(--success) !important;
+    transition: transform 0.15s ease;
+}
+
+/* =============================================
+   RESPONSIVE: Tablet (481px – 768px)
+   Sidebar schmaler
+   ============================================= */
+@media (max-width: 768px) and (min-width: 481px) {
+    :root {
+        --sidebar-width: 175px;
+        --btn-size: clamp(55px, 11vw, 72px);
+        --btn-font: clamp(1.2rem, 3.5vw, 1.8rem);
+    }
+
+    .side-btn, .grade-select {
+        font-size: 0.88rem;
+        padding: 10px;
+    }
+
+    .logo { font-size: 1.3rem; }
+    #current-score { font-size: 1.8rem; }
+    .main-content { padding: 14px; }
+
+    .game-screen {
+        padding: 18px;
+        border-radius: 22px;
+    }
+}
+
+/* =============================================
+   RESPONSIVE: Handy (bis 480px)
+   Sidebar → Bottom Navigation
+   ============================================= */
+@media (max-width: 480px) {
+    :root {
+        --btn-size: clamp(58px, 18vw, 74px);
+        --btn-font: clamp(1.3rem, 5.5vw, 1.9rem);
+        --word-font: clamp(2rem, 10vw, 3rem);
+    }
+
+    .app-container {
+        flex-direction: column;
+        height: 100dvh;
+    }
+
+    /* ---- MAIN CONTENT oben ---- */
+    .main-content {
+        flex: 1;
+        min-height: 0;
+        padding: 12px 10px 8px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        order: 1;
+    }
+
+    .game-screen {
+        padding: 14px 12px;
+        border-radius: 20px;
+    }
+
+    .word-display, #math-display {
+        min-height: 75px;
+        margin-bottom: 12px;
+    }
+
+    .alphabet, .alphabet-grid, .range-selection, #math-options {
+        gap: 7px;
+    }
+
+    .dot-container { gap: 7px; padding: 10px; }
+    .controls { gap: 8px; }
+    .main-btn { max-width: 100%; }
+
+    /* ---- SIDEBAR → BOTTOM NAV unten ---- */
+    .sidebar {
+        order: 2;
+        width: 100%;
+        min-width: unset;
+        height: auto;
+        flex-direction: column;
+        padding: 0;
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+        overflow: visible;
+        flex-shrink: 0;
+        background: white;
+    }
+
+    .logo { display: none; }
+
+    /* Score als kompakte Leiste */
+    #score-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 0;
+        padding: 4px 16px;
+        border-radius: 0;
+        border: none;
+        border-top: 1px solid #c8e6c9;
+        background: #f1f8f2;
+    }
+
+    .score-label { font-size: 0.72rem; }
+    #current-score { font-size: 1.3rem; }
+
+    /* Klassen-Dropdown */
+    .nav-section:has(.grade-select) {
+        padding: 5px 10px 0;
+        border-top: 1px solid #eee;
+    }
+
+    .nav-section:has(.grade-select) h4 { display: none; }
+
+    .grade-select {
+        width: 100%;
+        font-size: 0.82rem;
+        padding: 6px 10px;
+        margin-bottom: 3px;
+    }
+
+    /* Navigations-Buttons als horizontale Scroll-Leiste */
+    .side-nav {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 5px;
+        padding: 6px 10px 10px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        align-items: center;
+        /* Höhe der Nav-Zeile */
+        height: 56px;
+    }
+
+    .side-nav::-webkit-scrollbar { display: none; }
+
+    /* nav-section als transparenter Durchreicher */
+    .side-nav .nav-section {
+        display: contents;
+    }
+
+    .side-nav .nav-section h4 { display: none; }
+
+    .side-btn {
+        flex-shrink: 0;
+        width: auto;
+        padding: 7px 13px;
+        margin: 0;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        border-radius: 14px;
+        text-align: center;
+        background: #f5f5f5;
+    }
+
+    .side-btn.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 3px 0 #d84315;
+    }
+}
+
+/* =============================================
+   Sehr kleine Handys (unter 360px)
+   ============================================= */
+@media (max-width: 360px) {
+    :root {
+        --btn-size: 52px;
+        --btn-font: 1.15rem;
+        --word-font: 1.75rem;
+    }
+
+    .side-btn { font-size: 0.74rem; padding: 6px 9px; }
+    .game-screen { padding: 11px 9px; }
+    .side-nav { height: 50px; }
 }
