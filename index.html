@@ -2,78 +2,80 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SchlauFix - Lernen macht Spaß</title>
+    <title>SchlauFix Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <header>
-        <div class="logo">🦊 SchlauFix</div>
-        <div id="score-display">Punkte: <span id="current-score">0</span></div>
-        
-        <nav class="game-nav">
-            <div class="nav-group">
-                <span>Deutsch</span>
-                <button class="nav-btn" id="nav-silben" onclick="showGame('silben')">Silben</button>
-                <button class="nav-btn" id="nav-anlaut" onclick="showGame('anlaut')">Anlaute</button>
-            </div>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">🦊 SchlauFix</div>
             
-            <div class="nav-group">
-                <span>Mathe</span>
-                <button class="nav-btn math-btn" id="nav-mengen" onclick="showMathGame('mengen')">Mengen</button>
-                <button class="nav-btn math-btn" id="nav-vergleich" onclick="showMathGame('vergleich')">Größer/Kleiner</button>
-                <button class="nav-btn math-btn" id="nav-rechnen" onclick="showMathGame('rechnen')">Rechnen</button>
+            <div id="score-display">
+                <span class="score-label">Punkte</span>
+                <div id="current-score">0</div>
             </div>
 
-            <div class="nav-group">
-                <span>Stufe</span>
-                <select id="grade-level" class="nav-btn" onchange="generateMathTask()">
-                    <option value="1">Klasse 1</option>
-                    <option value="2">Klasse 2</option>
-                    <option value="3">Klasse 3</option>
-                    <option value="4">Klasse 4</option>
-                </select>
+            <nav class="side-nav">
+                <div class="nav-section">
+                    <h4>Klasse</h4>
+                    <select id="grade-level" class="grade-select" onchange="updateGradeLevel()">
+                        <option value="1">1. Klasse</option>
+                        <option value="2">2. Klasse</option>
+                    </select>
+                </div>
+
+                <div class="nav-section">
+                    <h4>Deutsch</h4>
+                    <button class="side-btn grade-1-only" onclick="showGame('silben')">📖 Silben</button>
+                    <button class="side-btn grade-1-only" onclick="showGame('anlaut')">🍎 Anlaute</button>
+                </div>
+
+                <div class="nav-section">
+                    <h4>Mathe</h4>
+                    <button class="side-btn grade-1-only" onclick="showMathGame('mengen')">🔢 Mengen</button>
+                    <button class="side-btn grade-1-only" onclick="showMathGame('vergleich')">⚖️ Vergleich</button>
+                    <button class="side-btn" onclick="showMathGame('rechnen')">➕ Rechnen</button>
+                </div>
+
+                <div class="nav-section">
+                    <h4>Einstellungen</h4>
+                    <button class="side-btn" onclick="showGame('settings')">⚙️ Lernstoff</button>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div id="game-silben" class="game-screen">
+                <div id="wordContainer" class="word-display">Wähle Buchstaben!</div>
+                <div class="controls">
+                    <button class="audio-btn" onclick="speakCurrentWord()">🔊</button>
+                    <button class="main-btn" onclick="renderRandomWord()">Weiter</button>
+                </div>
             </div>
-        </nav>
-    </header>
 
-    <main>
-        <div id="game-silben" class="game-screen">
-            <h3>Wort lesen</h3>
-            <div id="wordContainer" class="word-display">Wähle Buchstaben!</div>
-            <div class="controls">
-                <button class="audio-btn" onclick="speakCurrentWord()">🔊</button>
-                <button class="main-btn" onclick="renderRandomWord()">Anderes Wort</button>
+            <div id="game-anlaut" class="game-screen" style="display:none;">
+                <div id="anlautWord" class="word-display"></div>
+                <div id="anlaut-keyboard" class="alphabet"></div>
             </div>
-            <hr>
-            <h3>Meine Buchstaben</h3>
-            <div id="alphabet-container" class="alphabet"></div>
-        </div>
 
-        <div id="game-anlaut" class="game-screen" style="display:none;">
-            <h3>Welcher Buchstabe fehlt?</h3>
-            <div id="anlautWord" class="word-display">_ _ _</div>
-            <div id="anlautFeedback"></div>
-            <div id="anlaut-keyboard" class="alphabet"></div>
-        </div>
-
-        <div id="game-rechnen" class="game-screen" style="display:none;">
-            <div class="math-controls-top">
-                <select id="math-range" class="nav-btn" onchange="generateMathTask()">
-                    <option value="10">bis 10</option>
-                    <option value="20" selected>bis 20</option>
-                    <option value="100">bis 100</option>
-                </select>
+            <div id="game-rechnen" class="game-screen" style="display:none;">
+                <div id="math-display" class="word-display"></div>
+                <div id="math-options" class="alphabet"></div>
             </div>
-            <div id="math-display" class="word-display"></div>
-            <div id="math-feedback"></div>
-            <div id="math-options"></div>
-        </div>
-    </main>
 
-    <div id="confetti-container"></div>
-
+            <div id="game-settings" class="game-screen" style="display:none;">
+                <h3>Gelernt Buchstaben</h3>
+                <div id="alphabet-selection-grid" class="alphabet-grid"></div>
+                
+                <h3>Zahlenraum</h3>
+                <div class="range-selection">
+                    <button class="range-btn" onclick="setMathRange(10)">bis 10</button>
+                    <button class="range-btn" onclick="setMathRange(20)">bis 20</button>
+                    <button class="range-btn" onclick="setMathRange(100)">bis 100</button>
+                </div>
+            </div>
+        </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

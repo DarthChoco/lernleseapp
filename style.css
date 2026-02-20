@@ -1,278 +1,234 @@
-/* --- Basis-Setup --- */
-body {
-    font-family: 'Comic Sans MS', 'Segoe UI', Roboto, sans-serif;
-    text-align: center;
-    background-color: #f0f7ff;
-    color: #333;
-    margin: 0;
-    padding: 20px;
+/* --- BASIS-SETUP & VARIABLEN --- */
+:root {
+    --primary: #FF5722;      /* Orange: Deutsch & Hauptaktionen */
+    --secondary: #2196F3;    /* Blau: Mathe */
+    --success: #4CAF50;      /* Grün: Richtig / Aktiv */
+    --danger: #F44336;       /* Rot: Fehler */
+    --bg: #f0f7ff;
+    --sidebar-width: 250px;
 }
 
-/* --- Header & Logo --- */
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color: var(--bg);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background: white;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.05);
+    display: flex; flex-direction: column;
+    padding: 20px;
+    z-index: 10;
+}
+
 .logo {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    color: #FF5722;
-    margin-bottom: 10px;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 25px;
 }
 
 #score-display {
-    font-size: 1.4rem;
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.score-label { 
+    display: block; 
+    font-size: 0.8rem; 
+    color: var(--success); 
+    text-transform: uppercase; 
+    font-weight: bold; 
+}
+
+#current-score { 
+    font-size: 2.2rem; 
+    font-weight: bold; 
+    color: #2e7d32; 
+}
+
+.nav-section h4 {
+    font-size: 0.75rem;
+    color: #999;
+    text-transform: uppercase;
+    margin: 20px 0 10px 10px;
+}
+
+.side-btn, .grade-select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 6px;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    text-align: left;
     font-weight: bold;
-    color: #4CAF50;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.grade-select {
+    border: 2px solid #eee;
     background: white;
-    padding: 5px 20px;
-    border-radius: 20px;
-    display: inline-block;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
 }
 
-#current-score {
-    color: #FF5722;
-}
+.side-btn:hover { background: #fff3e0; }
+.side-btn.active { background: var(--primary); color: white; }
 
-/* --- Navigation --- */
-.game-nav {
+/* --- HAUPTBEREICH & SPIELFELD --- */
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
+    overflow-y: auto;
 }
 
-.nav-group {
+.game-screen {
     background: white;
-    padding: 10px 15px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 850px;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    align-self: flex-start;
+}
+
+/* --- ANZEIGEN (WORTE & MATHE) --- */
+.word-display {
+    font-size: 4rem;
+    font-weight: 800;
+    min-height: 160px;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 5px;
+    margin: 20px 0;
+    transition: color 0.3s;
 }
 
-.nav-group span {
-    font-size: 0.75rem;
-    color: #888;
-    text-transform: uppercase;
-}
+#wordContainer { gap: 0 !important; }
 
-.nav-btn {
-    padding: 10px 18px;
-    border: 2px solid #ddd;
-    border-radius: 12px;
-    background: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: inherit;
+/* Mathe Spezial-Anzeige */
+.math-big-num { color: var(--secondary); font-size: 4rem; font-weight: 800; }
+#math-quest { 
+    color: var(--primary); 
+    min-width: 70px; 
+    text-align: center; 
+    border-bottom: 5px solid #eee; 
+    margin-left: 15px;
     transition: all 0.2s;
 }
 
-.nav-btn.active {
-    background: #FF5722;
-    color: white;
-    border-color: #E64A19;
-}
+/* --- FEEDBACK KLASSEN --- */
+#math-quest.correct { color: var(--success); border-bottom-color: var(--success); transform: scale(1.1); }
+#math-quest.wrong { color: var(--danger); border-bottom-color: var(--danger); transform: shake 0.2s; }
 
-.math-btn.active {
-    background: #2196F3 !important;
-    border-color: #1976D2 !important;
-    color: white !important;
-}
-
-/* --- Haupt-Screens --- */
-.game-screen {
-    background: white;
-    padding: 25px;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    max-width: 900px;
-    margin: 0 auto;
-    min-height: 450px;
-}
-
-/* --- Wort- & Aufgaben-Anzeige --- */
-.word-display, #math-display {
-    font-size: 3.15rem; 
-    font-weight: 900;
-    margin: 20px 0;
-    min-height: 120px;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 25px; /* Abstand für Mathe-Elemente */
-    width: 100%;
-}
-
-/* SPEZIAL-FIX: Silben-Wort ohne Lücken anzeigen */
-#wordContainer {
-    gap: 0 !important;
-    letter-spacing: -1px; /* Zieht Buchstaben noch enger zusammen */
-}
-
-#wordContainer span {
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-}
-
-.math-big-num {
-    color: #2196F3;
-}
-
-#math-quest {
-    color: #FF5722;
-    min-width: 60px;
-    text-align: center;
-}
-
-/* Animation bei richtiger Lösung */
-.answer-highlight {
-    color: #4CAF50;
-    display: inline-block;
-    animation: pop 0.4s ease-out;
-}
-
-@keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.4); }
-    100% { transform: scale(1); }
-}
-
-/* --- Tastaturen (Einheitlich 48px) --- */
-.alphabet, #math-options {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin: 15px auto;
-}
-
-#math-options {
+/* --- BUTTONS & GRIDS --- */
+.alphabet, .alphabet-grid, .range-selection {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
-    max-width: 550px;
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
 }
 
-.letter-btn, .key-btn {
-    width: 48px;
-    height: 48px;
-    font-size: 1.3rem;
+.letter-btn, .range-btn, .audio-btn, .main-btn {
+    height: 60px;
+    font-size: 1.5rem;
     font-weight: bold;
-    border: 2px solid #eee;
+    border: 2px solid #ddd;
+    border-radius: 15px;
     background: white;
-    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.1s;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 4px 0 #ddd;
+    transition: 0.1s;
+    user-select: none;
 }
 
-.letter-btn.active {
-    background-color: #4CAF50;
-    color: white;
-    border-color: #388E3C;
+/* Aktive Zustände (z.B. gewählte Buchstaben oder Zahlenraum) */
+.letter-btn.active, .range-btn.active { 
+    background: var(--success) !important; 
+    color: white !important; 
+    border-color: #388E3C !important; 
+    box-shadow: 0 4px 0 #2e7d32; 
 }
 
-.key-btn {
-    border-bottom: 4px solid #ddd;
+.range-btn.active { 
+    background: var(--secondary) !important; 
+    box-shadow: 0 4px 0 #1565C0; 
 }
 
-.key-btn:active {
+/* Klick-Effekt */
+.letter-btn:active, .main-btn:active, .range-btn:active {
     transform: translateY(3px);
-    border-bottom-width: 1px;
+    box-shadow: 0 1px 0 #ccc;
 }
 
-/* --- Haupt-Aktions-Buttons --- */
+/* Steuerungselemente unten */
 .controls {
     display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 20px;
-    margin-top: 25px;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .main-btn {
-    padding: 12px 30px; 
-    font-size: 1.1rem;    
-    background: linear-gradient(135deg, #FF5722, #FF8A65);
+    background: var(--primary);
     color: white;
     border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 900;
+    padding: 0 40px;
+    box-shadow: 0 4px 0 #d84315;
 }
 
 .audio-btn {
-    width: 45px;  
-    height: 45px; 
-    font-size: 1.4rem; 
-    background: white;
-    border: 2px solid #FF5722;
-    color: #FF5722;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 60px;
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
-/* --- Mathe-Elemente (Mengen) --- */
+/* --- MATHE MENGEN (PUNKTE) --- */
 .dot-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 15px;
-    margin: 0 auto;
+    gap: 15px;
+    justify-items: center;
 }
 
 .dot {
-    width: 24px;
-    height: 24px;
-    background-color: #2196F3;
+    width: 35px;
+    height: 35px;
+    background: var(--secondary);
     border-radius: 50%;
+    box-shadow: inset -3px -3px 5px rgba(0,0,0,0.2);
 }
 
-/* --- Feedback & Trenner --- */
-#anlautFeedback, #math-feedback {
-    font-size: 1.6rem;
-    height: 40px;
-    margin: 10px 0;
-    font-weight: bold;
-}
+/* --- HILFSKLASSEN --- */
+.hidden { display: none !important; }
+.grade-1-only { /* Wird per JS gesteuert */ }
 
-hr {
-    border: 0;
-    height: 1px;
-    background: #eee;
-    margin: 20px 0;
-}
-
-/* --- Konfetti --- */
-#confetti-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-}
-
-.confetti {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    animation: fall linear forwards;
-}
-
-@keyframes fall {
-    to {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-    }
+/* Schüttel-Animation für Fehler */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
 }
