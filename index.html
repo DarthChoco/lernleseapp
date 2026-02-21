@@ -46,6 +46,43 @@
             </nav>
         </aside>
 
+        <!-- Mobile Tab-Bar (nur auf Handy sichtbar) -->
+        <div class="mobile-nav" id="mobile-nav">
+            <!-- Popup-Menüs (klappen nach oben auf) -->
+            <div class="mobile-popup" id="popup-deutsch">
+                <button class="mobile-popup-btn grade-1-only" onclick="mobileNav('silben')">📖 Silben</button>
+                <button class="mobile-popup-btn grade-1-only" onclick="mobileNav('anlaut')">🍎 Anlaute</button>
+            </div>
+            <div class="mobile-popup" id="popup-mathe">
+                <button class="mobile-popup-btn grade-1-only" onclick="mobileNavMath('mengen')">🔢 Mengen</button>
+                <button class="mobile-popup-btn grade-1-only" onclick="mobileNavMath('vergleich')">⚖️ Vergleich</button>
+                <button class="mobile-popup-btn" onclick="mobileNavMath('rechnen')">➕ Rechnen</button>
+                <button class="mobile-popup-btn grade-1-only" onclick="mobileNav('zahlenmauer')">🧱 Zahlenmauer</button>
+            </div>
+
+            <!-- Score-Anzeige in der Mitte -->
+            <div class="mobile-score">
+                <span id="mobile-score-val">0</span>
+                <span class="mobile-score-label">Pkt</span>
+            </div>
+
+            <!-- Tab-Buttons -->
+            <div class="mobile-tabs">
+                <button class="mobile-tab" id="tab-deutsch" onclick="toggleMobilePopup('deutsch')">
+                    <span class="mobile-tab-icon">🔤</span>
+                    <span class="mobile-tab-label">Deutsch</span>
+                </button>
+                <button class="mobile-tab mobile-tab-score" onclick="showGame('settings')">
+                    <span class="mobile-tab-icon">⚙️</span>
+                    <span class="mobile-tab-label">Einst.</span>
+                </button>
+                <button class="mobile-tab" id="tab-mathe" onclick="toggleMobilePopup('mathe')">
+                    <span class="mobile-tab-icon">🔢</span>
+                    <span class="mobile-tab-label">Mathe</span>
+                </button>
+            </div>
+        </div>
+
         <main class="main-content">
             <div id="game-silben" class="game-screen">
                 <div id="wordContainer" class="word-display">Wähle Buchstaben!</div>
@@ -75,7 +112,7 @@
             </div>
 
             <div id="game-settings" class="game-screen" style="display:none;">
-                <h3>Gelernt Buchstaben</h3>
+                <h3>Gelernte Buchstaben</h3>
                 <div id="alphabet-selection-grid" class="alphabet-grid"></div>
                 
                 <h3>Zahlenraum</h3>
@@ -84,6 +121,7 @@
                     <button class="range-btn" onclick="setMathRange(20)">bis 20</button>
                     <button class="range-btn" onclick="setMathRange(100)">bis 100</button>
                 </div>
+
             </div>
         </main>
     </div>

@@ -371,11 +371,11 @@ html, body {
     font-size: 0.9em;
 }
 
-/* Auf Handy: Toast etwas tiefer, damit er nicht hinter der Browser-Leiste verschwindet */
+/* Auf Handy: Toast sitzt über der Tab-Bar */
 @media (max-width: 480px) {
     .feedback-toast {
         top: auto;
-        bottom: calc(var(--bottom-nav-height) + 76px + 12px);
+        bottom: calc(62px + 24px + 12px); /* tab-bar + score-strip + Abstand */
         font-size: 1rem;
         padding: 10px 20px;
     }
@@ -575,22 +575,23 @@ html, body {
 }
 
 /* =============================================
-   RESPONSIVE: Handy (bis 480px)
-   Sidebar → Bottom Navigation
+   MOBILE NAV (Tab-Bar + Popup) – nur Handy
    ============================================= */
+.mobile-nav {
+    display: none; /* Desktop: versteckt */
+}
+
 @media (max-width: 480px) {
-    :root {
-        --btn-size: clamp(58px, 18vw, 74px);
-        --btn-font: clamp(1.3rem, 5.5vw, 1.9rem);
-        --word-font: clamp(2rem, 10vw, 3rem);
-    }
+
+    /* Sidebar auf Handy komplett ausblenden */
+    .sidebar { display: none; }
 
     .app-container {
         flex-direction: column;
         height: 100dvh;
     }
 
-    /* ---- MAIN CONTENT oben ---- */
+    /* Main Content füllt alles außer Tab-Bar */
     .main-content {
         flex: 1;
         min-height: 0;
@@ -605,107 +606,149 @@ html, body {
         border-radius: 20px;
     }
 
-    .word-display, #math-display {
-        min-height: 75px;
-        margin-bottom: 12px;
-    }
-
-    .alphabet, .alphabet-grid, .range-selection, #math-options {
-        gap: 7px;
-    }
-
+    .word-display, #math-display { min-height: 75px; margin-bottom: 12px; }
+    .alphabet, .alphabet-grid, .range-selection, #math-options { gap: 7px; }
     .dot-container { gap: 7px; padding: 10px; }
     .controls { gap: 8px; }
     .main-btn { max-width: 100%; }
 
-    /* ---- SIDEBAR → BOTTOM NAV unten ---- */
-    .sidebar {
-        order: 2;
-        width: 100%;
-        min-width: unset;
-        height: auto;
+    /* ---- MOBILE NAV sichtbar machen ---- */
+    .mobile-nav {
+        display: flex;
         flex-direction: column;
-        padding: 0;
-        box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
-        overflow: visible;
+        order: 2;
         flex-shrink: 0;
+        position: relative;
         background: white;
+        box-shadow: 0 -2px 16px rgba(0,0,0,0.10);
+        z-index: 100;
     }
 
-    .logo { display: none; }
-
-    /* Score als kompakte Leiste */
-    #score-display {
+    /* Score-Streifen über der Tab-Bar */
+    .mobile-score {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        margin: 0;
-        padding: 4px 16px;
-        border-radius: 0;
-        border: none;
-        border-top: 1px solid #c8e6c9;
+        gap: 5px;
+        padding: 3px 0 2px;
         background: #f1f8f2;
+        border-top: 1px solid #c8e6c9;
     }
 
-    .score-label { font-size: 0.72rem; }
-    #current-score { font-size: 1.3rem; }
-
-    /* Klassen-Dropdown */
-    .nav-section:has(.grade-select) {
-        padding: 5px 10px 0;
-        border-top: 1px solid #eee;
+    #mobile-score-val {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: #2e7d32;
+        line-height: 1;
     }
 
-    .nav-section:has(.grade-select) h4 { display: none; }
-
-    .grade-select {
-        width: 100%;
-        font-size: 0.82rem;
-        padding: 6px 10px;
-        margin-bottom: 3px;
+    .mobile-score-label {
+        font-size: 0.7rem;
+        color: #555;
+        text-transform: uppercase;
     }
 
-    /* Navigations-Buttons als horizontale Scroll-Leiste */
-    .side-nav {
+    /* ---- TAB-BAR ---- */
+    .mobile-tabs {
         display: flex;
         flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 5px;
-        padding: 6px 10px 10px;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
+        height: 62px;
+    }
+
+    .mobile-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        /* Höhe der Nav-Zeile */
-        height: 56px;
+        justify-content: center;
+        gap: 2px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 6px 4px;
+        transition: background 0.15s;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .side-nav::-webkit-scrollbar { display: none; }
+    .mobile-tab:active { background: #f5f5f5; }
 
-    /* nav-section als transparenter Durchreicher */
-    .side-nav .nav-section {
-        display: contents;
+    .mobile-tab-icon {
+        font-size: 1.7rem;
+        line-height: 1;
+        transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
 
-    .side-nav .nav-section h4 { display: none; }
+    .mobile-tab-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
 
-    .side-btn {
-        flex-shrink: 0;
-        width: auto;
-        padding: 7px 13px;
-        margin: 0;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        border-radius: 14px;
+    .mobile-tab.tab-active .mobile-tab-icon {
+        transform: scale(1.25) translateY(-3px);
+    }
+
+    .mobile-tab.tab-active .mobile-tab-label {
+        color: var(--primary);
+    }
+
+    /* ---- POPUP-MENÜ (klappt nach oben auf) ---- */
+    .mobile-popup {
+        position: absolute;
+        bottom: 100%; /* direkt über der Tab-Bar */
+        left: 0; right: 0;
+        background: white;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+        border-radius: 20px 20px 0 0;
+        padding: 10px 12px 14px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+
+        /* Eingeklappt */
+        transform: translateY(100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1), opacity 0.2s;
+    }
+
+    .mobile-popup.popup-open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .mobile-popup-btn {
+        flex: 1;
+        min-width: 130px;
+        max-width: 48%;
+        padding: 14px 10px;
+        font-size: 1rem;
+        font-weight: 800;
+        border: 3px solid #eee;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 5px 0 #eee;
+        cursor: pointer;
         text-align: center;
-        background: #f5f5f5;
+        transition: transform 0.1s, background 0.1s;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .side-btn.active {
+    .mobile-popup-btn:active {
+        transform: translateY(4px);
+        box-shadow: 0 1px 0 #eee;
+    }
+
+    .mobile-popup-btn.active {
         background: var(--primary);
         color: white;
-        box-shadow: 0 3px 0 #d84315;
+        border-color: #d84315;
+        box-shadow: 0 5px 0 #d84315;
     }
 }
 
@@ -719,7 +762,8 @@ html, body {
         --word-font: 1.75rem;
     }
 
-    .side-btn { font-size: 0.74rem; padding: 6px 9px; }
     .game-screen { padding: 11px 9px; }
-    .side-nav { height: 50px; }
+    .mobile-tabs { height: 56px; }
+    .mobile-tab-icon { font-size: 1.5rem; }
+    .mobile-popup-btn { font-size: 0.9rem; padding: 12px 8px; }
 }

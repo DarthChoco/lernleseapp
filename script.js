@@ -30,6 +30,9 @@ async function init() {
     createAlphabet();
     updateGradeLevel();
     updateRangeButtons();
+    syncMobileScore();
+    // Popups schließen wenn man außerhalb tippt
+    document.querySelector('.main-content').addEventListener('click', closeAllPopups);
 }
 
 // --- NAVIGATION & KLASSENSTUFE ---
@@ -278,6 +281,7 @@ function addMathOption(val) {
 function updateScoreDisplay() {
     document.getElementById('current-score').innerText = score;
     localStorage.setItem('schlaufix_score', score);
+    syncMobileScore();
     checkMilestone();
 }
 
@@ -579,6 +583,47 @@ function startFirework(canvas) {
         animFrame = requestAnimationFrame(draw);
     }
     draw();
+}
+
+// --- MOBILE NAV ---
+function toggleMobilePopup(which) {
+    const popup = document.getElementById('popup-' + which);
+    const tab = document.getElementById('tab-' + which);
+    const otherKey = which === 'deutsch' ? 'mathe' : 'deutsch';
+    const otherPopup = document.getElementById('popup-' + otherKey);
+    const otherTab = document.getElementById('tab-' + otherKey);
+
+    const isOpen = popup.classList.contains('popup-open');
+    // Alles schließen
+    otherPopup.classList.remove('popup-open');
+    otherTab.classList.remove('tab-active');
+    if (isOpen) {
+        popup.classList.remove('popup-open');
+        tab.classList.remove('tab-active');
+    } else {
+        popup.classList.add('popup-open');
+        tab.classList.add('tab-active');
+    }
+}
+
+function closeAllPopups() {
+    document.querySelectorAll('.mobile-popup').forEach(p => p.classList.remove('popup-open'));
+    document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('tab-active'));
+}
+
+function mobileNav(gameId) {
+    closeAllPopups();
+    showGame(gameId);
+}
+
+function mobileNavMath(mode) {
+    closeAllPopups();
+    showMathGame(mode);
+}
+
+function syncMobileScore() {
+    const el = document.getElementById('mobile-score-val');
+    if (el) el.textContent = score;
 }
 
 // START
